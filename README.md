@@ -48,3 +48,6 @@ Fetch a post with the given id.
 
 Fetch all posts.
 ```
+
+Fetch all posts.
+```
