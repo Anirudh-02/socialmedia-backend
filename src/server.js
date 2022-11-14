@@ -10,8 +10,8 @@ app.use(express.urlencoded({ extended: true }))
 app.use('/api', apiRoute)
 const PORT = process.env.PORT || 3000
 
-
-db.sync()
+if (process.env.NODE_ENV !== 'test') {
+    db.sync()
   .then(() => {
     let server = app.listen(PORT, () => {
       console.log(`server started at http://localhost:${PORT}`)
@@ -21,5 +21,6 @@ db.sync()
     console.error(new Error('Could not start database'))
     console.error(err)
   })
+}
 
 module.exports = app

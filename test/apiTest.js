@@ -1,3 +1,4 @@
+process.env.NODE_ENV = 'test'
 const app = require('../src/server')
 const { db, Posts, Users } = require('../src/db/models')
 
@@ -8,7 +9,7 @@ let should = chai.should()
 chai.use(chaiHttp)
 let token = ""
 
-describe("Authenticate user /POST /api/authenticate", () => {
+describe("Test the API", () => {
     before((done) => {
         let user = { email: "test_user_1@users.com", password: "testuserpassword" }
         chai.request(app)
@@ -20,45 +21,48 @@ describe("Authenticate user /POST /api/authenticate", () => {
             })
     })
 
-    it('Authenticate a user', (done) => {
-        let user = { email: "test_user_2@users.com", password: "testuserpassword" }
-        chai.request(app)
-            .post('/api/authenticate')
-            .send(user)
-            .end((err, res) => {
-                res.body.should.be.a('object')
-                res.should.have.status(200)
-                res.body.should.have.property('token')
-                done()
-            })
-    })
+    describe('Authenticate user /POST /api/authenticate', () => {
+        it('Authenticate a user', (done) => {
+            let user = { email: "test_user_2@users.com", password: "testuserpassword" }
+            chai.request(app)
+                .post('/api/authenticate')
+                .send(user)
+                .end((err, res) => {
+                    res.body.should.be.a('object')
+                    res.should.have.status(200)
+                    res.body.should.have.property('token')
+                    done()
+                })
+        })
 
-    it('Authentication should not work if  either email or password is missing', (done) => {
-        let user = { email: "test_mail@users.com" }
-        chai.request(app)
-            .post('/api/authenticate')
-            .send(user)
-            .end((err, res) => {
-                res.should.have.status(400)
-                res.body.should.be.a('object')
-                res.body.should.have.property('message')
-                res.body.message.should.be.eql('Need email and password to login')
-                done()
-            })
-    })
+        it('Authentication should not work if  either email or password is missing', (done) => {
+            let user = { email: "test_mail@users.com" }
+            chai.request(app)
+                .post('/api/authenticate')
+                .send(user)
+                .end((err, res) => {
+                    res.should.have.status(400)
+                    res.body.should.be.a('object')
+                    res.body.should.have.property('message')
+                    res.body.message.should.be.eql('Need email and password to login')
+                    done()
+                })
+        })
 
-    it('Authentication should not work if  either email or password is an empty string', (done) => {
-        let user = { email: "test_mail@users.com", password: " " }
-        chai.request(app)
-            .post('/api/authenticate')
-            .send(user)
-            .end((err, res) => {
-                res.should.have.status(400)
-                res.body.should.be.a('object')
-                res.body.should.have.property('message')
-                res.body.message.should.be.eql('Need email and password to login')
-                done()
-            })
+        it('Authentication should not work if  either email or password is an empty string', (done) => {
+            let user = { email: "test_mail@users.com", password: " " }
+            chai.request(app)
+                .post('/api/authenticate')
+                .send(user)
+                .end((err, res) => {
+                    res.should.have.status(400)
+                    res.body.should.be.a('object')
+                    res.body.should.have.property('message')
+                    res.body.message.should.be.eql('Need email and password to login')
+                    done()
+                })
+        })
+
     })
 
     describe('/POST /api/follow/:userId', () => {
@@ -194,6 +198,5 @@ describe("Authenticate user /POST /api/authenticate", () => {
     after((done) => {
         db.sync({ force: true })
         done()
-        // process.exit()
     })
 })
